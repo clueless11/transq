@@ -2,20 +2,20 @@ FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-devel
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_NO_CACHE_DIR=1
+ENV PYTHONUNBUFFERED=1
+ENV HF_HOME=/workspace/.cache/huggingface
+ENV TRANSFORMERS_CACHE=/workspace/.cache/huggingface
+ENV HF_HUB_ENABLE_HF_TRANSFER=1
 
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    nano \
-    unzip \
-    rsync \
+    git curl nano unzip rsync build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl https://rclone.org/install.sh | bash
 
-RUN pip install --upgrade pip
+RUN python -m pip install --upgrade pip setuptools wheel
 
-RUN pip install \
+RUN python -m pip install --no-cache-dir \
     openai \
     python-docx \
     pillow \
@@ -31,6 +31,17 @@ RUN pip install \
     deepspeed \
     sentencepiece \
     protobuf \
+    hf_transfer \
+    safetensors \
+    tiktoken \
+    einops \
+    scipy \
+    scikit-learn \
+    matplotlib \
     llamafactory
 
+RUN echo "transq image v2 - llamafactory/tokenizers included - 2026-06-24" > /IMAGE_VERSION.txt
+
 WORKDIR /workspace/transcribe
+
+CMD ["tail", "-f", "/dev/null"]
