@@ -1,0 +1,36 @@
+FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-devel
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PIP_NO_CACHE_DIR=1
+
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    nano \
+    unzip \
+    rsync \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://rclone.org/install.sh | bash
+
+RUN pip install --upgrade pip
+
+RUN pip install \
+    openai \
+    python-docx \
+    pillow \
+    pandas \
+    numpy \
+    transformers==4.55.4 \
+    "tokenizers>=0.21,<0.22" \
+    datasets==4.0.0 \
+    "accelerate>=1.3.0,<=1.11.0" \
+    "peft>=0.18.0,<=0.18.1" \
+    "trl>=0.18.0,<=0.24.0" \
+    bitsandbytes \
+    deepspeed \
+    sentencepiece \
+    protobuf \
+    llamafactory
+
+WORKDIR /workspace/transcribe
