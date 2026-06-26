@@ -38,9 +38,12 @@ RUN python -m pip install --no-cache-dir \
     scipy \
     scikit-learn \
     matplotlib \
-    llamafactory
+    llamafactory \
+    vllm
 
-RUN echo "transq image v2 - llamafactory/tokenizers included - 2026-06-24" > /IMAGE_VERSION.txt
+RUN mkdir -p /workspace/.cache/huggingface
+
+RUN echo "transq image v3 - llamafactory/tokenizers included - 2026-06-24" > /IMAGE_VERSION.txt
 
 WORKDIR /workspace/transcribe
 
