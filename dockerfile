@@ -13,8 +13,13 @@ RUN apt-get update && apt-get install -y \
 
 RUN curl https://rclone.org/install.sh | bash
 
+# Make bootstrap available immediately when you enter the container
+COPY bootstrap_restore.sh /workspace/transcribe/bootstrap_restore.sh
+RUN chmod +x /workspace/transcribe/bootstrap_restore.sh
+
 RUN python -m pip install --upgrade pip setuptools wheel
 
+# Install general dependencies first
 RUN python -m pip install --no-cache-dir \
     openai \
     python-docx \
@@ -38,12 +43,18 @@ RUN python -m pip install --no-cache-dir \
     scipy \
     scikit-learn \
     matplotlib \
-    llamafactory \
-    vllm
+    llamafactory
 
-RUN mkdir -p /workspace/.cache/huggingface
+# Force known-good runtime versions LAST
+RUN python -m pip install --no-cache-dir --force-reinstall \
+    fastapi==0.136.3 \
+    starlette==1.3.1 \
+    prometheus-fastapi-instrumentator==8.0.2 \
+    vllm==0.10.2
 
-RUN echo "transq image v3 - llamafactory/tokenizers included - 2026-06-24" > /IMAGE_VERSION.txt
+RUN mkdir -p /workspace/.cache/huggingface /workspace/transcribe
+
+RUN echo "transq image v4 - cuda12.8 - known-good vllm stack - 2026-06-28" > /IMAGE_VERSION.txt
 
 WORKDIR /workspace/transcribe
 
